@@ -27,7 +27,9 @@ public ModelAndView ProductPage(Model m) {
     String products=new Gson().toJson(productlist);
     m.addAttribute("products", products);
     System.out.println(products);   
-    return new ModelAndView("PRODUCTS");  
+    return new ModelAndView("PRODUCTS"); 
+    
+    
 }
 	
 }
