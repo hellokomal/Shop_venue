@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow
+http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+
+<!-- Executed when web flow is triggered -->
+<on-start>
+ <evaluate expression="productController.initflow()" result="flowScope.product"/>
+ <evaluate expression="shippingController.getShipping()" result="flowScope.shippingAddress"/>
+</on-start>
+
+<view-state id="start" view="cart" model="flowScope.product">
+ <transition on="submit" to="shippingDetails"/>
+</view-state>
+
+<!-- 
+<action-state id="validate">
+ <evaluate expression="registrationHandler.validateDetails(customerDetails,messageContext)"></evaluate>
+ <transition on="success" to="confirmDetails"/>
+ <transition on="failure" to="start"/>
+</action-state> -->
+
+<view-state id="shippingDetails" view="shippingdetails" model="flowScope.shippingAddress">
+  <transition on="edit" to="start"/>
+  <transition on="submit" to="confirmationDetails"/>
+  </view-state>
+  
+  <!-- 
+<action-state id="validate">
+ <evaluate expression="registrationHandler.validateDetails(customerDetails,messageContext)"></evaluate>
+ <transition on="success" to="confirmDetails"/>
+ <transition on="failure" to="start"/>
+</action-state>
+-->
+  
+  <view-state id="confirmationDetails" view="confirmationdetails" model="flowScope.shippingAddress">
+  <transition on="edit" to="shippingDetails"/>
+  <transition on="submit" to="success"/>
+  </view-state>
+  <view-state id="success" view="successship">
+  <transition on="submit" to="toHome"/>
+  </view-state>
+  
+  <end-state id="registered" view="Registered"/>
+   
+  <end-state id="toHome" view="externalRedirect:Home"/>
+  
+  <end-state id="toException" view="externalRedirect:contextRelative:Exception.jsp"/>   
+ <global-transitions>
+		<transition on="home" to="toHome" />
+		<transition on="error" to="toException" />
+ </global-transitions>   
+
+</flow>

@@ -1,0 +1,92 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans.xsd
+http://www.springframework.org/schema/tx
+http://www.springframework.org/schema/tx/spring-tx.xsd
+http://www.springframework.org/schema/context
+http://www.springframework.org/schema/context/spring-context.xsd
+http://www.springframework.org/schema/mvc
+http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+ 
+       <mvc:annotation-driven />
+       <context:component-scan base-package="com.shopvenue" />
+       <!-- Data Source Declaration -->
+       <bean id="dataSource"
+              class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+             <property name="driverClassName" value="org.h2.Driver" />
+             <property name="url" value="jdbc:h2:~/test" />
+             <property name="username" value="sa" />
+             <property name="password" value="sa" />
+       </bean>
+ 
+       <!-- Session Factory Declaration -->
+       <bean id="sessionFactory"
+              class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+             <property name="dataSource" ref="dataSource" />
+             <property name="annotatedClasses">
+                    <list>
+                           <value>com.shopvenue.model.Product</value>
+                           <value>com.shopvenue.model.Register</value>                                             
+                    </list>
+                    
+
+             </property>
+ 
+             <!-- Setting Hibenate properties -->
+             <property name="hibernateProperties">
+                    <props>
+                           <prop key="lazy">false</prop>
+                           <prop key="hibernate.hbm2ddl.auto">update</prop>
+                           <prop key="hibernate.dialect">org.hibernate.dialect.H2Dialect</prop>
+                           <prop key="hibernate.format_sql">true</prop>
+                           <prop key="hibernate.show_sql">true</prop>
+                    </props>
+             </property>
+       </bean>
+ 
+ 
+<!-- Creating bean for UserDAO and sending session object to UserDAO -->
+       <bean id="productDAO" class="com.shopvenue.dao.ProductDAO">
+             <property name="sessionFactory" ref="sessionFactory"></property>
+       </bean>
+       <!-- Creating bean for UserService and sending DAO object to UserService -->
+       <bean id="productService" class="com.shopvenue.service.ProductService">
+             <property name="productDAO" ref="productDAO"></property>
+ 
+       </bean>
+      
+     <bean id="adminDAO" class="com.shopvenue.dao.AdminDAO">
+             <property name="sessionFactory" ref="sessionFactory"></property>
+       </bean>
+       <!-- Creating bean for UserService and sending DAO object to UserService -->
+       <bean id="adminService" class="com.shopvenue.service.AdminService">
+             <property name="adminDAO" ref="adminDAO"></property>
+ 
+       </bean>
+      
+      <bean id="registerDAO" class="com.shopvenue.dao.RegisterDAO">
+             <property name="sessionFactory" ref="sessionFactory"></property>
+       </bean>
+       <!-- Creating bean for UserService and sending DAO object to UserService -->
+       <bean id="registerService" class="com.shopvenue.service.RegisterService">
+             <property name="registerDAO" ref="registerDAO"></property>
+ 
+       </bean>
+      
+       <context:component-scan base-package="com.shopvenue" />
+ 
+       <context:annotation-config />
+ 
+       <!-- Enable the configuration of transactional behavior based on annotations -->
+       <tx:annotation-driven transaction-manager="txManager" />
+       <!-- Transaction Manager is defined -->
+       <bean id="txManager"
+              class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+             <property name="sessionFactory" ref="sessionFactory" />
+       </bean>
+       
+</beans>
+ 
